@@ -1,9 +1,9 @@
 Here is a single sequential flow for Track B. Each phase builds on the last, and each ends with a Sunday submission.
 
-## Phase 0: Setup (before Week 1)
-1. Attend the intro class and register your team with official email IDs.
-2. Read the project doc once and note the Track B grading: architecture 45, UI/UX 25, cloud deployment 20, code quality 15, presentation 15, bonus up to 15.
-3. Create one GitHub monorepo:
+## Phase 0: Setup (before Week 1) ✅
+1. ~~Attend the intro class and register your team with official email IDs.~~  ✅
+2. ~~Read the project doc once and note the Track B grading: architecture 45, UI/UX 25, cloud deployment 20, code quality 15, presentation 15, bonus up to 15.~~ ✅
+3. ~~Create one GitHub monorepo:~~ ✅
 ```
 finance-agent/
   backend/    (FastAPI)
@@ -12,15 +12,15 @@ finance-agent/
   docs/       (architecture, blog, PPT notes)
   README.md
 ```
-4. Get API keys (LLM, Google Vision or Gemini, Splitwise) and keep them in `.env`, never in git.
-5. Collect 15-20 mock or redacted screenshots (GPay, PhonePe, Paytm) and 2-3 sample bank statement CSVs. This is your test set for the whole project.
+4. ~~Get API keys (LLM, Google Vision or Gemini, Splitwise) and keep them in `.env`, never in git.~~ ✅ Gemini API key configured
+5. Collect 15-20 mock or redacted screenshots (GPay, PhonePe, Paytm) and 2-3 sample bank statement CSVs. This is your test set for the whole project. 🔲 In progress
 
-## Week 1: Screenshot → structured expense
-1. Set up FastAPI with a health endpoint and CORS.
-2. Build `POST /extract`: image in, JSON out (`date, amount, merchant, category, payment_app`). Use a vision LLM first, with Tesseract + regex as a fallback.
-3. Measure extraction accuracy on your test set and log the failures.
-4. Add rule-based categorization (Swiggy/Zomato → Food, Uber/Ola → Transport, and so on).
-5. Add error handling for blurry images and unsupported formats.
+## Week 1: Screenshot → structured expense (IN PROGRESS)
+1. ~~Set up FastAPI with a health endpoint and CORS.~~ ✅
+2. ~~Build `POST /extract`: image in, JSON out (`date, amount, merchant, category, payment_app`). Use a vision LLM first, with Tesseract + regex as a fallback.~~ ✅ Using Gemini 3.8 Flash
+3. Measure extraction accuracy on your test set and log the failures. 🔲
+4. Add rule-based categorization (Swiggy/Zomato → Food, Uber/Ola → Transport, and so on). 🔲
+5. Add error handling for blurry images and unsupported formats. ✅ Basic validation done
 
 **Sunday submission 1:** extraction working from the API, with a short demo clip.
 
