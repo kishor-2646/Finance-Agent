@@ -1,3 +1,28 @@
+"""
+backend/main.py
+===============
+Finance Agent — FastAPI backend.
+
+Status: Week 1 (IN PROGRESS)
+
+Endpoints
+---------
+GET  /health   — liveness check
+POST /extract  — accepts a payment screenshot (JPEG/PNG) and returns
+                 structured JSON: {date, amount, currency, merchant,
+                 payment_app, category, confidence}
+
+Model
+-----
+Google Gemini 3.8 Flash (vision).  The prompt instructs the model to return
+only JSON, handles year-missing screenshots via fix_year(), and coerces
+list-wrapped responses to a single dict.
+
+Next steps (Week 1)
+-------------------
+- Run evaluate.py against data/screenshots/ to measure accuracy.
+- Add rule-based category overrides (Swiggy → Food, etc.).
+"""
 import io, json, os
 from datetime import date, datetime
 

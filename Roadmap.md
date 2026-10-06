@@ -13,14 +13,16 @@ finance-agent/
   README.md
 ```
 4. ~~Get API keys (LLM, Google Vision or Gemini, Splitwise) and keep them in `.env`, never in git.~~ ✅ Gemini API key configured
-5. Collect 15-20 mock or redacted screenshots (GPay, PhonePe, Paytm) and 2-3 sample bank statement CSVs. This is your test set for the whole project. 🔲 In progress
+5. ~~Collect 15-20 mock or redacted screenshots (GPay, PhonePe, Paytm) and 2-3 sample bank statement CSVs. This is your test set for the whole project.~~ ✅ 15 screenshots collected (`data/screenshots/ss01–ss15.jpeg`)
 
 ## Week 1: Screenshot → structured expense (IN PROGRESS)
 1. ~~Set up FastAPI with a health endpoint and CORS.~~ ✅
 2. ~~Build `POST /extract`: image in, JSON out (`date, amount, merchant, category, payment_app`). Use a vision LLM first, with Tesseract + regex as a fallback.~~ ✅ Using Gemini 3.8 Flash
-3. Measure extraction accuracy on your test set and log the failures. 🔲
-4. Add rule-based categorization (Swiggy/Zomato → Food, Uber/Ola → Transport, and so on). 🔲
-5. Add error handling for blurry images and unsupported formats. ✅ Basic validation done
+3. ~~Build `data/expected.csv` ground-truth CSV with 15 labelled screenshots.~~ ✅
+4. ~~Write `backend/evaluate.py` accuracy script (date, amount, merchant, category checks).~~ ✅
+5. Run evaluate.py and log field-level accuracy & failures. 🔲 In progress
+6. Add rule-based categorization (Swiggy/Zomato → Food, Uber/Ola → Transport, and so on). 🔲
+7. Add error handling for blurry images and unsupported formats. ✅ Basic validation done
 
 **Sunday submission 1:** extraction working from the API, with a short demo clip.
 

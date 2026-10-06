@@ -1,3 +1,33 @@
+"""
+backend/evaluate.py
+===================
+Accuracy evaluation script for the Finance Agent /extract endpoint.
+
+Status: Week 1 — script complete, awaiting first accuracy run.
+
+Usage
+-----
+  # 1. Start the backend in another terminal:
+  #    uvicorn main:app --reload
+  # 2. Then run from the backend/ directory:
+  python evaluate.py
+
+What it does
+------------
+- Reads ground-truth labels from  ../data/expected.csv
+  (columns: file, date, amount, merchant, category)
+- Posts each screenshot in ../data/screenshots/<file> to POST /extract
+- Compares the model's response to the expected values for four fields:
+    date     — exact ISO-8601 match (after normalising Excel's US format)
+    amount   — float equality
+    merchant — case-insensitive substring match
+    category — exact string match
+- Prints per-field accuracy and lists every mismatch.
+
+Rate limiting
+-------------
+A 4-second sleep between requests keeps usage within the free-tier quota.
+"""
 import csv, time, mimetypes, requests
 
 URL = "http://localhost:8000/extract"
@@ -10,7 +40,9 @@ failures = []
 
 from datetime import datetime
 
+
 def norm_date(s):
+    """Normalise a date string to YYYY-MM-DD, accepting both ISO and Excel US formats."""
     s = (s or "").strip()
     for fmt in ("%Y-%m-%d", "%m/%d/%Y"):   # Excel's US-style format
         try:

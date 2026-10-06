@@ -12,9 +12,10 @@ An AI-powered personal finance assistant that extracts transaction data from pay
 | `POST /extract` — image → structured JSON | ✅ Done |
 | API key verification script (`check_keys.py`) | ✅ Done |
 | `.env` / `.env.example` setup | ✅ Done |
-| Test screenshot collection (`data/screenshots/`) | 🔲 In progress |
-| Ground-truth CSV (`data/expected.csv`) | 🔲 In progress |
-| Extraction accuracy measurement | 🔲 Planned (Week 1) |
+| Test screenshot collection (`data/screenshots/`) | ✅ Done (15 screenshots) |
+| Ground-truth CSV (`data/expected.csv`) | ✅ Done (15 labelled rows) |
+| Extraction accuracy script (`backend/evaluate.py`) | ✅ Done |
+| Extraction accuracy measurement (run results) | 🔲 In progress (Week 1) |
 | Rule-based categorisation | 🔲 Planned (Week 1) |
 | Database, auth & UI | 🔲 Planned (Week 2) |
 | Cloud deployment | 🔲 Planned (Week 2) |
@@ -30,14 +31,15 @@ finance-agent/
 ├── backend/
 │   ├── .venv/                # Python virtual environment (git-ignored)
 │   ├── main.py               # FastAPI app with /health and /extract endpoints
+│   ├── evaluate.py           # Accuracy evaluation script (runs against expected.csv)
 │   ├── check_keys.py         # Verifies Gemini API key & lists available models
 │   ├── requirements.txt      # Frozen pip dependencies
 │   └── app/
 │       ├── __init__.py
 │       └── main.py           # Original scaffold (to be merged later)
 ├── data/
-│   ├── screenshots/          # Mock/redacted payment screenshots (15-20)
-│   ├── expected.csv          # Ground-truth answers for accuracy testing
+│   ├── screenshots/          # 15 mock/redacted payment screenshots (ss01–ss15.jpeg)
+│   ├── expected.csv          # Ground-truth labels for all 15 screenshots
 │   └── sample_transactions.csv
 ├── docs/
 │   ├── architecture.md       # System overview & data-flow diagram
@@ -94,6 +96,16 @@ Open http://localhost:8000/docs to test the API interactively.
 
 Upload a payment screenshot via the Swagger UI at `/docs`. The API returns structured JSON:
 
+### 6. Run the accuracy evaluation
+
+```bash
+# Make sure the backend is running (uvicorn main:app --reload)
+python evaluate.py
+```
+
+This sends each of the 15 screenshots in `data/screenshots/` to `/extract`, compares the
+result against `data/expected.csv`, and prints per-field accuracy (date, amount, merchant, category).
+
 ```json
 {
   "date": "2026-09-15",
@@ -105,7 +117,7 @@ Upload a payment screenshot via the Swagger UI at `/docs`. The API returns struc
 }
 ```
 
-### 6. Frontend (coming in Week 2)
+### 7. Frontend (coming in Week 2)
 
 ```bash
 cd frontend
