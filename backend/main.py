@@ -31,6 +31,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from google import genai
 from PIL import Image
+from categorizer import categorize
 
 load_dotenv("../.env")
 
@@ -107,7 +108,10 @@ async def extract(file: UploadFile = File(...)):
         data = json.loads(resp.text)
         if isinstance(data, list):  # model sometimes wraps the result in a list
             data = data[0] if data else {}
-        return fix_year(data)
+        data = fix_year(data)
+        data["category_model"] = data.get("category")  # keep the model's guess for comparison
+        data["category"], data["category_source"] = categorize(data.get("merchant"), data.get("category"))
+        return data
     except json.JSONDecodeError:
         raise HTTPException(502, "Model returned invalid JSON")
     except Exception as e:
