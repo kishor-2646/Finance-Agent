@@ -1,1 +1,16 @@
-file,date,amount,merchant
+file,date,amount,merchant,category
+ss01.jpeg,2026-09-30,1000,Arun,Transfer
+ss02.jpeg,2026-09-24,475,Swiggy,Food
+ss03.jpeg,2026-09-30,20,Kirana Store,Groceries
+ss04.jpeg,2026-09-30,5000,"National Institute of Technology, Trichy",Education
+ss05.jpeg,2024-05-20,1250,Zomato,Food
+ss06.jpeg,2024-05-14,3500,Serenity Spa,Personal Care
+ss07.jpeg,2026-09-29,1899,AJIO,Shopping
+ss08.jpeg,2026-09-29,1899,Amirtha Super Market,Groceries
+ss09.jpeg,2024-10-15,1200,Subway India,Food
+ss10.jpeg,2026-10-02,2875,TNEB,Bills
+ss11.jpeg,,475,,Other
+ss12.jpeg,2026-10-02,2875,TNEB Bill,Bills
+ss13.jpeg,2024-05-14,350,Zomato,Food
+ss14.jpeg,2024-05-14,3500,Serenity Spa,Personal Care
+ss15.jpeg,,1250,Serenity Retail,Shopping

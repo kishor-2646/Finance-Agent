@@ -1,4 +1,6 @@
 import io, json, os
+from datetime import date, datetime
+
 from dotenv import load_dotenv
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,12 +22,38 @@ app.add_middleware(
 )
 
 PROMPT = """You are reading a screenshot of a payment (UPI/GPay/PhonePe/Paytm) or a receipt.
+Today's date is TODAY.
 Return ONLY JSON with these keys:
-date (YYYY-MM-DD or null), amount (number, no currency symbol), currency,
+date (YYYY-MM-DD or null), year_visible (true or false), amount (number, no currency symbol), currency,
 merchant (string or null), payment_app (string or null),
-category (one of: Food, Transport, Shopping, Bills, Entertainment, Health,
-Education, Transfer, Other).
-If a field is not visible, use null. Do not guess."""
+category (one of: Food, Groceries, Transport, Shopping, Bills, Entertainment,
+Health, Personal Care, Education, Transfer, Other),
+confidence (high, medium or low).
+
+Rules:
+- Set year_visible to false if the screenshot does not show a year (for example "02 Oct" or "May 14").
+  In that case still return your best date; the server will correct the year.
+- If the image is blurred or unclear, set unreadable fields to null and confidence to low. Do not guess.
+- Supermarkets and kirana stores -> Groceries. Spas and salons -> Personal Care.
+  Restaurants and food delivery -> Food. Payments to people -> Transfer.
+- If the screen lists several transactions, extract only the main/top one."""
+
+
+def fix_year(data: dict) -> dict:
+    """If the screenshot shows no year, use the most recent past date with that day and month."""
+    d = data.get("date")
+    if d and data.get("year_visible") is False:
+        try:
+            parsed = datetime.strptime(d, "%Y-%m-%d").date()
+            today = date.today()
+            candidate = parsed.replace(year=today.year)
+            if candidate > today:
+                candidate = candidate.replace(year=today.year - 1)
+            data["date"] = candidate.isoformat()
+        except ValueError:
+            pass  # e.g. Feb 29 in a non-leap year: keep the model's value
+    data.pop("year_visible", None)
+    return data
 
 
 @app.get("/health")
@@ -43,13 +71,18 @@ async def extract(file: UploadFile = File(...)):
     except Exception:
         raise HTTPException(400, "Could not read the image")
 
+    prompt = PROMPT.replace("TODAY", date.today().isoformat())
+
     try:
         resp = client.models.generate_content(
             model=MODEL,
-            contents=[PROMPT, img],
+            contents=[prompt, img],
             config={"response_mime_type": "application/json"},
         )
-        return json.loads(resp.text)
+        data = json.loads(resp.text)
+        if isinstance(data, list):  # model sometimes wraps the result in a list
+            data = data[0] if data else {}
+        return fix_year(data)
     except json.JSONDecodeError:
         raise HTTPException(502, "Model returned invalid JSON")
     except Exception as e:
