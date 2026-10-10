@@ -3,7 +3,7 @@ backend/main.py
 ===============
 Finance Agent — FastAPI backend.
 
-Status: Week 1 (IN PROGRESS)
+Status: Week 2
 
 Endpoints
 ---------
@@ -18,10 +18,11 @@ Google Gemini 3.8 Flash (vision).  The prompt instructs the model to return
 only JSON, handles year-missing screenshots via fix_year(), and coerces
 list-wrapped responses to a single dict.
 
-Next steps (Week 1)
--------------------
-- Run evaluate.py against data/screenshots/ to measure accuracy.
-- Add rule-based category overrides (Swiggy → Food, etc.).
+Other routers
+-------------
+/expenses    — save, list, delete expenses (expenses.py)
+/insights    — dashboard summary and rule-based advice (insights.py)
+/statements  — CSV bank statement import (statements.py)
 """
 import io, json, os
 from datetime import date, datetime
@@ -32,6 +33,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from google import genai
 from PIL import Image
 from categorizer import categorize
+from expenses import router as expenses_router
+from insights import router as insights_router
+from statements import router as statements_router
+
+
+
 
 load_dotenv("../.env")
 
@@ -46,6 +53,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(expenses_router)
+app.include_router(insights_router)
+app.include_router(statements_router)
 
 PROMPT = """You are reading a screenshot of a payment (UPI/GPay/PhonePe/Paytm) or a receipt.
 Today's date is TODAY.
@@ -62,6 +73,7 @@ Rules:
 - If the image is blurred or unclear, set unreadable fields to null and confidence to low. Do not guess.
 - Supermarkets and kirana stores -> Groceries. Spas and salons -> Personal Care.
   Restaurants and food delivery -> Food. Payments to people -> Transfer.
+- payment_app: use the app named on the screen or footer (for example "Powered by PhonePe"). If none is named, use null. Do not guess.
 - If the screen lists several transactions, extract only the main/top one."""
 
 
